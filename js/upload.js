@@ -1,47 +1,132 @@
-<!doctype html>
-<html lang="da">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Flow Approver — Upload</title>
-  <link rel="stylesheet" href="css/upload.css" />
-</head>
-<body>
-  <div class="page">
-    <header class="topbar">
-      <div class="topbarInner">
-        <div class="brand">
-          <div class="brandIcon">▢</div>
-          <div class="brandTitle">Review</div>
-        </div>
-        <a class="btn pill" href="index.html">Back</a>
-      </div>
-    </header>
+// js/upload.js
+const supabaseClient = supabase.createClient(
+  window.SUPABASE_URL,
+  window.SUPABASE_ANON_KEY,
+);
+const BUCKET = window.SUPABASE_BUCKET || "uploads";
 
-    <main class="content">
-      <div class="h1">New Upload</div>
+const dropzone = document.getElementById("dropzone");
+const fileInput = document.getElementById("fileInput");
+const uploadBtn = document.getElementById("uploadBtn");
+const copyBtn = document.getElementById("copyBtn");
+const out = document.getElementById("out");
+const hint = document.getElementById("hint");
 
-      <div class="panel">
-        <div id="dropzone" class="dropzone">
-          <div class="dzIcon">⤒</div>
-          <div class="dzTitle">Drag file here or click to upload</div>
-          <div class="dzSub">Image / Video / PDF</div>
-          <input id="fileInput" type="file" accept="image/*,application/pdf,video/*" />
-        </div>
+let selectedFile = null;
+let shareUrl = "";
 
-        <div class="row">
-          <button id="uploadBtn" class="btn primary pill">Upload & create link</button>
-          <button id="copyBtn" class="btn pill" disabled>Copy link</button>
-        </div>
+// Optional: if upload.html is opened with ?k=..., we pass it to review link.
+// (Useful if you want deletes/back to project in the review page in some flows.)
+const params = new URLSearchParams(location.search);
+const key = params.get("k");
 
-        <div id="out" class="out"></div>
-        <div id="hint" class="hint"></div>
-      </div>
-    </main>
-  </div>
+function guessFileType(file) {
+  if (file.type.startsWith("image/")) return "image";
+  if (file.type.startsWith("video/")) return "video";
+  if (file.type === "application/pdf") return "pdf";
+  return "file";
+}
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/config.js"></script>
-  <script src="js/upload.js"></script>
-</body>
-</html>
+function setSelected(file) {
+  selectedFile = file;
+  hint.textContent = file ? `Selected: ${file.name}` : "Pick a file.";
+}
+
+async function doUpload() {
+  if (!selectedFile) {
+    hint.textContent = "Pick a file first.";
+    return;
+  }
+
+  hint.textContent = "Uploading…";
+  out.style.display = "none";
+  copyBtn.disabled = true;
+
+  const ext = (selectedFile.name.split(".").pop() || "bin").toLowerCase();
+  const storagePath = `${crypto.randomUUID()}.${ext}`;
+
+  // 1) Upload to storage
+  const { error: upErr } = await supabaseClient.storage
+    .from(BUCKET)
+    .upload(storagePath, selectedFile, { upsert: false });
+
+  if (upErr) throw upErr;
+
+  // 2) Public URL
+  const { data: pub } = supabaseClient.storage
+    .from(BUCKET)
+    .getPublicUrl(storagePath);
+  const fileUrl = pub.publicUrl;
+
+  // 3) Create review row (single-file flow)
+  const { data: review, error: insErr } = await supabaseClient
+    .from("reviews")
+    .insert({
+      file_url: fileUrl,
+      file_type: guessFileType(selectedFile),
+      status: "needs_changes",
+      storage_path: storagePath,
+    })
+    .select("id")
+    .single();
+
+  if (insErr) throw insErr;
+
+  // 4) Share link
+  shareUrl = `${location.origin}/review.html?id=${review.id}`;
+  if (key) shareUrl += `&k=${encodeURIComponent(key)}`;
+
+  out.style.display = "block";
+  out.textContent = shareUrl;
+  copyBtn.disabled = false;
+  hint.textContent = "Done. Send link to your client.";
+}
+
+if (dropzone && fileInput) {
+  dropzone.addEventListener("click", () => fileInput.click());
+
+  dropzone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropzone.style.background = "#151515";
+  });
+
+  dropzone.addEventListener("dragleave", () => {
+    dropzone.style.background = "#121212";
+  });
+
+  dropzone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropzone.style.background = "#121212";
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+    setSelected(file);
+  });
+
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files?.[0];
+    if (!file) return;
+    setSelected(file);
+  });
+}
+
+if (uploadBtn) {
+  uploadBtn.addEventListener("click", async () => {
+    try {
+      await doUpload();
+    } catch (err) {
+      hint.textContent = "Upload error: " + (err?.message || err);
+    }
+  });
+}
+
+if (copyBtn) {
+  copyBtn.addEventListener("click", async () => {
+    if (!shareUrl) return;
+    await navigator.clipboard.writeText(shareUrl);
+    copyBtn.textContent = "Copied ✓";
+    setTimeout(() => (copyBtn.textContent = "Copy link"), 1200);
+  });
+}
+
+// Default hint
+if (hint && !hint.textContent) hint.textContent = "Pick a file to upload.";
