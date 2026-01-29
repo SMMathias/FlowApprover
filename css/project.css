@@ -1,0 +1,134 @@
+@import url("./base.css");
+
+.projectHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 6px 0 18px;
+  flex-wrap: wrap;
+}
+
+.titleWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.projectTitleBig {
+  font-size: 24px;
+  font-weight: 650;
+  margin: 0;
+}
+
+.dropzone {
+  border: 1px dashed #2b2b2b;
+  background: #121212;
+  border-radius: var(--radius);
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  min-height: 120px;
+  cursor: pointer;
+}
+.dropzone:hover {
+  background: #151515;
+}
+.dzIcon {
+  font-size: 20px;
+  opacity: 0.75;
+}
+.dzTitle {
+  font-weight: 600;
+}
+.dzSub {
+  color: var(--muted);
+  font-size: 12px;
+}
+#fileInput {
+  display: none;
+}
+
+.fileGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.fileCard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+}
+.fileCard:hover {
+  background: var(--card2);
+}
+
+.thumb {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #0f0f0f;
+  height: 210px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6f6f6f;
+  font-size: 13px;
+  overflow: hidden;
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fileRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.fileName {
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70%;
+}
+
+.tag {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #111111;
+  color: var(--muted);
+  user-select: none;
+}
+.tag.approved {
+  color: var(--green);
+  border-color: rgba(46, 204, 113, 0.35);
+}
+.tag.changes {
+  color: var(--red);
+  border-color: rgba(231, 76, 60, 0.35);
+}
+
+@media (max-width: 900px) {
+  .fileGrid {
+    grid-template-columns: 1fr;
+  }
+  .thumb {
+    height: 200px;
+  }
+}

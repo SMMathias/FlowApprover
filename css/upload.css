@@ -1,0 +1,57 @@
+@import url("./base.css");
+
+.panel {
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.dropzone {
+  border: 1px dashed #2b2b2b;
+  background: #121212;
+  border-radius: var(--radius);
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  min-height: 140px;
+  cursor: pointer;
+}
+.dropzone:hover {
+  background: #151515;
+}
+.dzIcon {
+  font-size: 20px;
+  opacity: 0.75;
+}
+.dzTitle {
+  font-weight: 600;
+}
+.dzSub {
+  color: var(--muted);
+  font-size: 12px;
+}
+#fileInput {
+  display: none;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.out {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #101010;
+  font-size: 13px;
+  word-break: break-all;
+  display: none;
+}

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Flow Approver — Project</title>
+    <link rel="stylesheet" href="css/project.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <div class="topbarInner">
+          <div class="brand">
+            <div class="brandIcon">▢</div>
+            <div class="brandTitle">Review</div>
+          </div>
+          <button id="shareBtn" class="btn pill">⤴︎ Share client link</button>
+        </div>
+      </header>
+
+      <main class="content">
+        <a class="backLink" href="index.html">← Back to projects</a>
+
+        <div class="projectHeader">
+          <div class="titleWrap">
+            <h2 id="projectName" class="projectTitleBig">Loading…</h2>
+          </div>
+        </div>
+
+        <div id="dropzone" class="dropzone">
+          <div class="dzIcon">⤒</div>
+          <div class="dzTitle">Drag files here or click to upload</div>
+          <div class="dzSub">PNG, JPG, PDF up to 10MB</div>
+          <input
+            id="fileInput"
+            type="file"
+            accept="image/*,application/pdf,video/*"
+          />
+        </div>
+
+        <section id="grid" class="fileGrid"></section>
+        <div id="hint" class="hint"></div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/project.js"></script>
+  </body>
+</html>

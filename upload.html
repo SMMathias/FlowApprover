@@ -4,303 +4,50 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Flow Approver — Upload</title>
-    <style>
-      :root {
-        --accent: #5b7cfa;
-        --bg: #0b0c10;
-        --card: #11131a;
-        --text: #e9ecf1;
-        --muted: #9aa3b2;
-        --line: rgba(255, 255, 255, 0.08);
-        --radius: 18px;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        font-family:
-          ui-sans-serif,
-          system-ui,
-          -apple-system,
-          Segoe UI,
-          Roboto,
-          Arial;
-        background:
-          radial-gradient(
-            1200px 700px at 20% 0%,
-            rgba(91, 124, 250, 0.18),
-            transparent 60%
-          ),
-          radial-gradient(
-            900px 600px at 80% 20%,
-            rgba(255, 255, 255, 0.06),
-            transparent 60%
-          ),
-          var(--bg);
-        color: var(--text);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-      }
-      .wrap {
-        width: 100%;
-        max-width: 860px;
-      }
-      .top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 14px;
-      }
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .logo {
-        width: 34px;
-        height: 34px;
-        border-radius: 12px;
-        background: linear-gradient(
-          135deg,
-          rgba(91, 124, 250, 0.9),
-          rgba(91, 124, 250, 0.25)
-        );
-        box-shadow: 0 8px 22px rgba(91, 124, 250, 0.25);
-      }
-      .h1 {
-        font-size: 20px;
-        margin: 0;
-      }
-      .sub {
-        margin: 0;
-        color: var(--muted);
-        font-size: 13px;
-      }
-      .card {
-        background: rgba(17, 19, 26, 0.78);
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        padding: 18px;
-        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
-        backdrop-filter: blur(10px);
-      }
-      .row {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        align-items: center;
-      }
-      .file {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        border: 1px dashed rgba(255, 255, 255, 0.18);
-        border-radius: 14px;
-        padding: 14px;
-        background: rgba(255, 255, 255, 0.03);
-      }
-      input[type="file"] {
-        width: 100%;
-      }
-      button {
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        background: rgba(255, 255, 255, 0.06);
-        color: var(--text);
-        padding: 10px 12px;
-        border-radius: 12px;
-        cursor: pointer;
-        font-weight: 600;
-      }
-      button.primary {
-        background: rgba(91, 124, 250, 0.18);
-        border-color: rgba(91, 124, 250, 0.38);
-      }
-      button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-      .hint {
-        color: var(--muted);
-        font-size: 12px;
-        margin-top: 10px;
-        line-height: 1.5;
-      }
-      .linkbox {
-        margin-top: 14px;
-        padding: 12px;
-        border-radius: 14px;
-        border: 1px solid var(--line);
-        background: rgba(255, 255, 255, 0.03);
-        display: none;
-      }
-      .linkrow {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-      }
-      .url {
-        font-family:
-          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-          "Liberation Mono";
-        font-size: 12px;
-        color: var(--text);
-        word-break: break-all;
-      }
-      .pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 12px;
-        color: var(--muted);
-      }
-      .dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 99px;
-        background: var(--accent);
-      }
-    </style>
+    <link rel="stylesheet" href="css/upload.css" />
   </head>
   <body>
-    <div class="wrap">
-      <div class="top">
-        <div class="brand">
-          <div class="logo"></div>
-          <div>
-            <p class="h1">Flow Approver</p>
-            <p class="sub">
-              Upload én fil → send ét link → få feedback + approve.
-            </p>
+    <div class="page">
+      <header class="topbar">
+        <div class="topbarInner">
+          <div class="brand">
+            <div class="brandIcon">▢</div>
+            <div class="brandTitle">Review</div>
           </div>
+          <a class="btn pill" href="index.html">Back</a>
         </div>
-      </div>
+      </header>
 
-      <div class="card">
-        <div class="row">
-          <div class="file">
-            <div style="flex: 1">
-              <input
-                id="file"
-                type="file"
-                accept="image/*,video/*,application/pdf"
-              />
-              <div class="hint">
-                Tip: billeder, video eller PDF. Ingen login. Bare et link.
-              </div>
-            </div>
-            <button id="uploadBtn" class="primary" disabled>
-              Upload & lav link
+      <main class="content">
+        <div class="h1">New Upload</div>
+
+        <div class="panel">
+          <div id="dropzone" class="dropzone">
+            <div class="dzIcon">⤒</div>
+            <div class="dzTitle">Drag file here or click to upload</div>
+            <div class="dzSub">Image / Video / PDF</div>
+            <input
+              id="fileInput"
+              type="file"
+              accept="image/*,application/pdf,video/*"
+            />
+          </div>
+
+          <div class="row">
+            <button id="uploadBtn" class="btn primary pill">
+              Upload & create link
             </button>
+            <button id="copyBtn" class="btn pill" disabled>Copy link</button>
           </div>
-        </div>
 
-        <div id="linkbox" class="linkbox">
-          <div class="linkrow">
-            <div class="pill"><span class="dot"></span> Share-link klar</div>
-            <button id="copyBtn">Copy link</button>
-          </div>
-          <div style="margin-top: 10px" class="url" id="shareUrl"></div>
+          <div id="out" class="out"></div>
+          <div id="hint" class="hint"></div>
         </div>
-
-        <div id="status" class="hint" style="margin-top: 12px"></div>
-      </div>
+      </main>
     </div>
 
-    <!-- Supabase JS (CDN) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-      // 1) INDSÆT DINE VALUES HER:
-      const SUPABASE_URL = "https://umzxwpijxvxcwrovbnbd.supabase.co";
-      const SUPABASE_ANON_KEY =
-        "sb_publishable_TFambYZ_MwZGYoweMKx7DA_yt-QSFaC";
-
-      const supabaseClient = supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY,
-      );
-
-      const fileInput = document.getElementById("file");
-      const uploadBtn = document.getElementById("uploadBtn");
-      const statusEl = document.getElementById("status");
-      const linkbox = document.getElementById("linkbox");
-      const shareUrlEl = document.getElementById("shareUrl");
-      const copyBtn = document.getElementById("copyBtn");
-
-      fileInput.addEventListener("change", () => {
-        uploadBtn.disabled = !fileInput.files?.length;
-        linkbox.style.display = "none";
-        statusEl.textContent = "";
-      });
-
-      copyBtn.addEventListener("click", async () => {
-        const text = shareUrlEl.textContent.trim();
-        await navigator.clipboard.writeText(text);
-        copyBtn.textContent = "Copied ✓";
-        setTimeout(() => (copyBtn.textContent = "Copy link"), 1200);
-      });
-
-      function guessFileType(file) {
-        if (file.type.startsWith("image/")) return "image";
-        if (file.type.startsWith("video/")) return "video";
-        if (file.type === "application/pdf") return "pdf";
-        return "file";
-      }
-
-      uploadBtn.addEventListener("click", async () => {
-        try {
-          uploadBtn.disabled = true;
-          statusEl.textContent = "Uploader…";
-
-          const file = fileInput.files[0];
-          const fileType = guessFileType(file);
-          const ext = (file.name.split(".").pop() || "bin").toLowerCase();
-          const path = `${crypto.randomUUID()}.${ext}`;
-
-          // Upload til Storage bucket "uploads"
-          const { data: upData, error: upErr } = await supabaseClient.storage
-            .from("uploads")
-            .upload(path, file, { upsert: false });
-
-          if (upErr) throw upErr;
-
-          // Public URL (bucket er public)
-          const { data: pub } = supabaseClient.storage
-            .from("uploads")
-            .getPublicUrl(path);
-
-          const fileUrl = pub.publicUrl;
-
-          // Opret review record
-          const { data: review, error: insErr } = await supabaseClient
-            .from("reviews")
-            .insert({ file_url: fileUrl, file_type: fileType })
-            .select()
-            .single();
-
-          if (insErr) throw insErr;
-
-          // Lav share-link (samme folder/site)
-          const shareUrl = `${location.origin}${location.pathname.replace("upload.html", "")}review.html?id=${review.id}`;
-
-          shareUrlEl.textContent = shareUrl;
-          linkbox.style.display = "block";
-          statusEl.textContent = "Done. Send linket til din klient.";
-        } catch (err) {
-          console.error(err);
-          statusEl.textContent = "Fejl: " + (err?.message || err);
-        } finally {
-          uploadBtn.disabled = false;
-        }
-      });
-    </script>
+    <script src="js/config.js"></script>
+    <script src="js/upload.js"></script>
   </body>
 </html>

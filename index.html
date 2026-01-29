@@ -1,27 +1,37 @@
 <!doctype html>
 <html lang="da">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Flow Approver — Projects</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <div class="page">
-    <header class="topbar">
-      <div class="topbarInner">
-        <div class="brand">
-          <div class="brandIcon">▢</div>
-          <div class="brandTitle">Review</div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Flow Approver — Projects</title>
+    <link rel="stylesheet" href="css/index.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <div class="topbarInner">
+          <div class="brand">
+            <div class="brandIcon">▢</div>
+            <div class="brandTitle">Review</div>
+          </div>
+          <button id="newProjectBtn" class="btn primary pill">
+            ＋ New project
+          </button>
         </div>
+      </header>
 
-        <a class="btn primary pill" href="upload.html">＋ New project</a>
-      </div>
-    </header>
+      <main class="content">
+        <div class="h1">Your Projects</div>
+        <section id="projects" class="projects"></section>
+        <div id="empty" class="hint" style="display: none">
+          No projects yet. Click “New project”.
+        </div>
+        <div id="err" class="hint" style="display: none"></div>
+      </main>
+    </div>
 
-    <main class="content">
-      <div class="h1">Your Projects</div>
-
-      <section class="projects">
-        <!-- Card 1 -->
-        <div class="project
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/index.js"></script>
+  </body>
+</html>
