@@ -1,0 +1,197 @@
+:root {
+  --bg: #0a0a0a;
+  --top: #121212;
+  --card: #141414;
+  --card2: #161616;
+  --border: #1f1f1f;
+
+  --text: #ffffff;
+  --muted: #9a9a9a;
+
+  --green: #2ecc71;
+  --yellow: #f4b942;
+  --red: #e74c3c;
+
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+/* ===== Layout containers ===== */
+.page {
+  min-height: 100%;
+}
+
+.topbar {
+  height: 64px;
+  background: linear-gradient(180deg, #141414 0%, #111111 100%);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+}
+
+.topbarInner {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brandIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #fff;
+  color: #000;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  flex: 0 0 auto;
+}
+
+.brandTitle {
+  font-weight: 650;
+  letter-spacing: 0.2px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.content {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 26px 18px 60px;
+}
+
+.h1 {
+  font-size: 32px;
+  font-weight: 650;
+  margin: 18px 0 18px;
+}
+
+/* ===== Buttons (Figma-like) ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+.btn:hover { background: var(--card2); }
+
+.btn.primary {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+.btn.primary:hover { opacity: .92; }
+
+.btn.pill { border-radius: 999px; padding: 10px 16px; }
+
+/* ===== Projects list cards ===== */
+.projects {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.projectCard {
+  background: linear-gradient(180deg, #141414 0%, #131313 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.projectLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.projectTitle {
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.projectMetaRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--muted);
+}
+
+.dot.green { background: var(--green); }
+.dot.yellow { background: var(--yellow); }
+.dot.red { background: var(--red); }
+
+.openBtn {
+  border-radius: 12px;
+  padding: 10px 16px;
+  background: transparent;
+}
+
+.openBtn:hover {
+  background: #161616;
+}
+
+/* ===== Review stage (reuse) ===== */
+.stage {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #0f0f0f;
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: crosshair;
