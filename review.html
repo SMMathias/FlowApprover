@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ApproveFlow — Review</title>
+    <style>
+      :root {
+        --accent: #5b7cfa;
+        --bg: #0b0c10;
+        --card: #11131a;
+        --text: #e9ecf1;
+        --muted: #9aa3b2;
+        --line: rgba(255, 255, 255, 0.08);
+        --radius: 18px;
+        --good: #2ee59d;
+        --bad: #ff6b6b;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Arial;
+        background:
+          radial-gradient(
+            1200px 700px at 20% 0%,
+            rgba(91, 124, 250, 0.18),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px 600px at 80% 20%,
+            rgba(255, 255, 255, 0.06),
+            transparent 60%
+          ),
+          var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        padding: 20px;
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .top {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        background: linear-gradient(
+          135deg,
+          rgba(91, 124, 250, 0.9),
+          rgba(91, 124, 250, 0.25)
+        );
+        box-shadow: 0 8px 22px rgba(91, 124, 250, 0.25);
+      }
+      .h1 {
+        margin: 0;
+        font-size: 18px;
+      }
+      .sub {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      button {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        padding: 10px 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      button.approve {
+        border-color: rgba(46, 229, 157, 0.35);
+        background: rgba(46, 229, 157, 0.14);
+      }
+      button.changes {
+        border-color: rgba(255, 107, 107, 0.35);
+        background: rgba(255, 107, 107, 0.14);
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.03);
+        font-size: 12px;
+        color: var(--muted);
+        user-select: none;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 99px;
+        background: var(--muted);
+      }
+      .dot.good {
+        background: var(--good);
+      }
+      .dot.bad {
+        background: var(--bad);
+      }
+
+      .card {
+        background: rgba(17, 19, 26, 0.78);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 14px;
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(10px);
+      }
+
+      .stage {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        background: rgba(255, 255, 255, 0.02);
+        min-height: 420px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: crosshair;
+      }
+
+      .stage img,
+      .stage video,
+      .stage iframe {
+        max-width: 100%;
+        max-height: 78vh;
+        display: block;
+      }
+      .stage iframe {
+        width: 100%;
+        height: 78vh;
+        border: 0;
+        background: #000;
+      }
+
+      .pin {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        border-radius: 99px;
+        background: var(--accent);
+        box-shadow: 0 8px 18px rgba(91, 124, 250, 0.3);
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+      }
+      .tooltip {
+        position: absolute;
+        transform: translate(-50%, 10px);
+        background: rgba(0, 0, 0, 0.65);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: var(--text);
+        padding: 10px 12px;
+        border-radius: 12px;
+        max-width: 280px;
+        font-size: 12px;
+        line-height: 1.45;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.12s ease;
+        backdrop-filter: blur(8px);
+      }
+      .meta {
+        color: var(--muted);
+        margin-top: 6px;
+        font-size: 11px;
+      }
+      .hint {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="top">
+        <div class="brand">
+          <div class="logo"></div>
+          <div>
+            <p class="h1">ApproveFlow</p>
+            <p class="sub">
+              Klik på filen for at tilføje en kommentar. Ingen login.
+            </p>
+          </div>
+        </div>
+
+        <div class="actions">
+          <div id="badge" class="badge">
+            <span class="dot"></span><span id="badgeText">Loading…</span>
+          </div>
+          <button id="approveBtn" class="approve">Approve</button>
+          <button id="changesBtn" class="changes">Request changes</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div
+          id="stage"
+          class="stage"
+          title="Klik for at tilføje kommentar"
+        ></div>
+        <div class="hint" id="status"></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      // 1) INDSÆT DINE VALUES HER:
+      const SUPABASE_URL = "PASTE_YOUR_SUPABASE_PROJECT_URL";
+      const SUPABASE_ANON_KEY = "PASTE_YOUR_SUPABASE_ANON_KEY";
+
+      const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+      );
+
+      const stage = document.getElementById("stage");
+      const statusEl = document.getElementById("status");
+      const badge = document.getElementById("badge");
+      const badgeDot = badge.querySelector(".dot");
+      const badgeText = document.getElementById("badgeText");
+      const approveBtn = document.getElementById("approveBtn");
+      const changesBtn = document.getElementById("changesBtn");
+
+      const params = new URLSearchParams(location.search);
+      const reviewId = params.get("id");
+
+      if (!reviewId) {
+        statusEl.textContent = "Mangler ?id= i URL'en.";
+        approveBtn.disabled = true;
+        changesBtn.disabled = true;
+        throw new Error("Missing review id");
+      }
+
+      let review = null;
+      let tooltip = null;
+
+      function setBadge(status) {
+        if (status === "approved") {
+          badgeDot.className = "dot good";
+          badgeText.textContent = "Approved";
+        } else {
+          badgeDot.className = "dot bad";
+          badgeText.textContent = "Needs changes";
+        }
+      }
+
+      function formatTime(iso) {
+        try {
+          const d = new Date(iso);
+          return d.toLocaleString();
+        } catch {
+          return "";
+        }
+      }
+
+      function clearPins() {
+        stage.querySelectorAll(".pin, .tooltip").forEach((el) => el.remove());
+      }
+
+      function showTooltip(xPx, yPx, text, createdAt) {
+        if (!tooltip) {
+          tooltip = document.createElement("div");
+          tooltip.className = "tooltip";
+          stage.appendChild(tooltip);
+        }
+        tooltip.style.left = xPx + "px";
+        tooltip.style.top = yPx + "px";
+        tooltip.innerHTML = `
+        <div>${escapeHtml(text)}</div>
+        <div class="meta">${formatTime(createdAt)}</div>
+      `;
+        tooltip.style.opacity = "1";
+        setTimeout(() => {
+          if (tooltip) tooltip.style.opacity = "0";
+        }, 1800);
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function renderAsset(fileUrl, fileType) {
+        stage.innerHTML = "";
+        const el = (() => {
+          if (fileType === "image") {
+            const img = document.createElement("img");
+            img.src = fileUrl;
+            img.alt = "Upload";
+            return img;
+          }
+          if (fileType === "video") {
+            const vid = document.createElement("video");
+            vid.src = fileUrl;
+            vid.controls = true;
+            vid.playsInline = true;
+            return vid;
+          }
+          // pdf
+          const frame = document.createElement("iframe");
+          frame.src = fileUrl;
+          return frame;
+        })();
+        stage.appendChild(el);
+      }
+
+      async function loadReview() {
+        statusEl.textContent = "Loader…";
+
+        const { data, error } = await supabaseClient
+          .from("reviews")
+          .select("*")
+          .eq("id", reviewId)
+          .single();
+
+        if (error) throw error;
+        review = data;
+
+        renderAsset(review.file_url, review.file_type);
+        setBadge(review.status);
+        statusEl.textContent = "Klik på filen for at efterlade feedback.";
+      }
+
+      async function loadComments() {
+        const { data, error } = await supabaseClient
+          .from("comments")
+          .select("*")
+          .eq("review_id", reviewId)
+          .order("created_at", { ascending: true });
+
+        if (error) throw error;
+
+        clearPins();
+        // pins gemmes som procent (0..1) — vi render som px
+        const rect = stage.getBoundingClientRect();
+
+        for (const c of data) {
+          const pin = document.createElement("div");
+          pin.className = "pin";
+          pin.style.left = c.x * rect.width + "px";
+          pin.style.top = c.y * rect.height + "px";
+
+          pin.addEventListener("mouseenter", () => {
+            showTooltip(
+              c.x * rect.width,
+              c.y * rect.height,
+              c.text,
+              c.created_at,
+            );
+          });
+
+          stage.appendChild(pin);
+        }
+      }
+
+      async function addCommentAt(clientX, clientY) {
+        const rect = stage.getBoundingClientRect();
+        const x = (clientX - rect.left) / rect.width;
+        const y = (clientY - rect.top) / rect.height;
+
+        // super simpelt input (vi kan lave pæn modal senere)
+        const text = prompt("Skriv din kommentar:");
+        if (!text || !text.trim()) return;
+
+        const { error } = await supabaseClient.from("comments").insert({
+          review_id: reviewId,
+          x: Math.min(Math.max(x, 0), 1),
+          y: Math.min(Math.max(y, 0), 1),
+          text: text.trim(),
+        });
+
+        if (error) throw error;
+        await loadComments();
+      }
+
+      async function setStatus(nextStatus) {
+        const { data, error } = await supabaseClient
+          .from("reviews")
+          .update({ status: nextStatus })
+          .eq("id", reviewId)
+          .select()
+          .single();
+
+        if (error) throw error;
+        review = data;
+        setBadge(review.status);
+      }
+
+      // Events
+      stage.addEventListener("click", async (e) => {
+        try {
+          await addCommentAt(e.clientX, e.clientY);
+        } catch (err) {
+          console.error(err);
+          statusEl.textContent = "Fejl: " + (err?.message || err);
+        }
+      });
+
+      approveBtn.addEventListener("click", async () => {
+        try {
+          await setStatus("approved");
+        } catch (err) {
+          console.error(err);
+          statusEl.textContent = "Fejl: " + (err?.message || err);
+        }
+      });
+
+      changesBtn.addEventListener("click", async () => {
+        try {
+          await setStatus("needs_changes");
+        } catch (err) {
+          console.error(err);
+          statusEl.textContent = "Fejl: " + (err?.message || err);
+        }
+      });
+
+      // Keep pins positioned on resize
+      window.addEventListener("resize", () => loadComments());
+
+      // Init
+      (async () => {
+        try {
+          await loadReview();
+          await loadComments();
+
+          // Realtime: auto-opdater comments + status
+          supabaseClient
+            .channel("rt-approveflow")
+            .on(
+              "postgres_changes",
+              {
+                event: "*",
+                schema: "public",
+                table: "comments",
+                filter: `review_id=eq.${reviewId}`,
+              },
+              () => loadComments(),
+            )
+            .on(
+              "postgres_changes",
+              {
+                event: "UPDATE",
+                schema: "public",
+                table: "reviews",
+                filter: `id=eq.${reviewId}`,
+              },
+              async () => {
+                const { data } = await supabaseClient
+                  .from("reviews")
+                  .select("*")
+                  .eq("id", reviewId)
+                  .single();
+                if (data) setBadge(data.status);
+              },
+            )
+            .subscribe();
+        } catch (err) {
+          console.error(err);
+          statusEl.textContent = "Fejl: " + (err?.message || err);
+        }
+      })();
+    </script>
+  </body>
+</html>
