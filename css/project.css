@@ -1,5 +1,12 @@
 @import url("./base.css");
 
+.topRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .projectHeader {
   display: flex;
   align-items: flex-start;

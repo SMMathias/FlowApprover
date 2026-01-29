@@ -26,7 +26,7 @@ async function getProjectStats(projectId) {
   if (error) return { total: 0, approved: 0, waiting: 0 };
   const total = data.length;
   const approved = data.filter((r) => r.status === "approved").length;
-  const waiting = total - approved; // MVP: needs_changes counts as waiting
+  const waiting = total - approved;
   return { total, approved, waiting };
 }
 
@@ -37,7 +37,7 @@ async function renderProjects() {
 
   const { data: projects, error } = await supabaseClient
     .from("projects")
-    .select("*")
+    .select("id,name,access_key,created_at")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -71,7 +71,7 @@ async function renderProjects() {
           <span class="metaItem"><span class="dot ${dotClass}"></span>${label}</span>
         </div>
       </div>
-      <a class="btn openBtn" href="project.html?pid=${p.id}">Open</a>
+      <a class="btn openBtn" href="project.html?pid=${p.id}&k=${p.access_key}">Open</a>
     `;
     projectsEl.appendChild(card);
   }
@@ -84,7 +84,7 @@ newProjectBtn.addEventListener("click", async () => {
   const { data, error } = await supabaseClient
     .from("projects")
     .insert({ name: name.trim() })
-    .select()
+    .select("id,access_key")
     .single();
 
   if (error) {
@@ -92,7 +92,7 @@ newProjectBtn.addEventListener("click", async () => {
     return;
   }
 
-  location.href = `project.html?pid=${data.id}`;
+  location.href = `project.html?pid=${data.id}&k=${data.access_key}`;
 });
 
 renderProjects();

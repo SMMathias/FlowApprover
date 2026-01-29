@@ -82,6 +82,12 @@ body {
   padding: 26px 18px 60px;
 }
 
+.h1 {
+  font-size: 32px;
+  font-weight: 650;
+  margin: 18px 0 18px;
+}
+
 .backLink {
   color: var(--muted);
   text-decoration: none;
@@ -112,6 +118,14 @@ body {
   border-radius: 999px;
   padding: 10px 16px;
 }
+.btn.primary {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+.btn.primary:hover {
+  opacity: 0.92;
+}
 
 .btn.approve {
   border-color: rgba(46, 204, 113, 0.35);
@@ -121,8 +135,11 @@ body {
   border-color: rgba(231, 76, 60, 0.35);
   color: var(--red);
 }
+.btn.danger {
+  border-color: rgba(231, 76, 60, 0.35);
+  color: var(--red);
+}
 
-/* status pill */
 .status {
   display: inline-flex;
   align-items: center;
@@ -160,7 +177,6 @@ body {
   background: var(--yellow);
 }
 
-/* stage */
 .stage {
   position: relative;
   border-radius: var(--radius);
@@ -201,4 +217,10 @@ body {
   color: var(--muted);
   font-size: 13px;
   margin-top: 10px;
+}
+
+@media (max-width: 700px) {
+  .h1 {
+    font-size: 26px;
+  }
 }

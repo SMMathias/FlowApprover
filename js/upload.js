@@ -1,102 +1,47 @@
-const supabaseClient = supabase.createClient(
-  window.SUPABASE_URL,
-  window.SUPABASE_ANON_KEY,
-);
-const BUCKET = window.SUPABASE_BUCKET;
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flow Approver — Upload</title>
+  <link rel="stylesheet" href="css/upload.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="topbarInner">
+        <div class="brand">
+          <div class="brandIcon">▢</div>
+          <div class="brandTitle">Review</div>
+        </div>
+        <a class="btn pill" href="index.html">Back</a>
+      </div>
+    </header>
 
-const dropzone = document.getElementById("dropzone");
-const fileInput = document.getElementById("fileInput");
-const uploadBtn = document.getElementById("uploadBtn");
-const copyBtn = document.getElementById("copyBtn");
-const out = document.getElementById("out");
-const hint = document.getElementById("hint");
+    <main class="content">
+      <div class="h1">New Upload</div>
 
-let selectedFile = null;
-let shareUrl = "";
+      <div class="panel">
+        <div id="dropzone" class="dropzone">
+          <div class="dzIcon">⤒</div>
+          <div class="dzTitle">Drag file here or click to upload</div>
+          <div class="dzSub">Image / Video / PDF</div>
+          <input id="fileInput" type="file" accept="image/*,application/pdf,video/*" />
+        </div>
 
-function guessFileType(file) {
-  if (file.type.startsWith("image/")) return "image";
-  if (file.type.startsWith("video/")) return "video";
-  if (file.type === "application/pdf") return "pdf";
-  return "file";
-}
+        <div class="row">
+          <button id="uploadBtn" class="btn primary pill">Upload & create link</button>
+          <button id="copyBtn" class="btn pill" disabled>Copy link</button>
+        </div>
 
-async function doUpload() {
-  if (!selectedFile) {
-    hint.textContent = "Pick a file first.";
-    return;
-  }
+        <div id="out" class="out"></div>
+        <div id="hint" class="hint"></div>
+      </div>
+    </main>
+  </div>
 
-  hint.textContent = "Uploading…";
-  out.style.display = "none";
-  copyBtn.disabled = true;
-
-  const ext = (selectedFile.name.split(".").pop() || "bin").toLowerCase();
-  const path = `${crypto.randomUUID()}.${ext}`;
-
-  const { error: upErr } = await supabaseClient.storage
-    .from(BUCKET)
-    .upload(path, selectedFile, { upsert: false });
-  if (upErr) throw upErr;
-
-  const { data: pub } = supabaseClient.storage.from(BUCKET).getPublicUrl(path);
-  const fileUrl = pub.publicUrl;
-
-  const { data: review, error: insErr } = await supabaseClient
-    .from("reviews")
-    .insert({
-      file_url: fileUrl,
-      file_type: guessFileType(selectedFile),
-      status: "needs_changes",
-    })
-    .select()
-    .single();
-
-  if (insErr) throw insErr;
-
-  shareUrl = `${location.origin}/review.html?id=${review.id}`;
-  out.style.display = "block";
-  out.textContent = shareUrl;
-  copyBtn.disabled = false;
-  hint.textContent = "Done. Send link to your client.";
-}
-
-dropzone.addEventListener("click", () => fileInput.click());
-
-dropzone.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  dropzone.style.background = "#151515";
-});
-dropzone.addEventListener("dragleave", () => {
-  dropzone.style.background = "#121212";
-});
-dropzone.addEventListener("drop", (e) => {
-  e.preventDefault();
-  dropzone.style.background = "#121212";
-  const file = e.dataTransfer.files?.[0];
-  if (!file) return;
-  selectedFile = file;
-  hint.textContent = `Selected: ${file.name}`;
-});
-
-fileInput.addEventListener("change", () => {
-  const file = fileInput.files?.[0];
-  if (!file) return;
-  selectedFile = file;
-  hint.textContent = `Selected: ${file.name}`;
-});
-
-uploadBtn.addEventListener("click", async () => {
-  try {
-    await doUpload();
-  } catch (err) {
-    hint.textContent = "Upload error: " + (err?.message || err);
-  }
-});
-
-copyBtn.addEventListener("click", async () => {
-  if (!shareUrl) return;
-  await navigator.clipboard.writeText(shareUrl);
-  copyBtn.textContent = "Copied ✓";
-  setTimeout(() => (copyBtn.textContent = "Copy link"), 1200);
-});
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/upload.js"></script>
+</body>
+</html>
